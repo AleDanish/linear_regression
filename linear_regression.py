@@ -15,11 +15,8 @@ def getResults(p_acc):
 
 import numpy as np
 from svmutil import *
-#datafile = 'input_data'
-datafile='heart_scale'
-
 # Read data in LIBSVM format
-y, x = svm_read_problem('../../'+datafile)
+y, x = svm_read_problem('input_data')
 prob  = svm_problem(y, x)
 
 max_correlation = 0
