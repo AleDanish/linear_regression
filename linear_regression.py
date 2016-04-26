@@ -21,7 +21,7 @@ prob  = svm_problem(y, x)
 
 max_correlation = 0
 best_conditions = ''
-best_results = [[0 for i in range(2)] for j in range(4)] 
+best_results = [['' for i in range(3)] for j in range(4)] 
 for t in range(0, 4):
     if t == 0:
         name = 'LINEAR'
@@ -46,8 +46,9 @@ for t in range(0, 4):
                 results = 'mean squared error:' + str(error) + ' - correlation:' + str(correlation) + '\n'
                 file.write(conditions + ": " + results)
                 if (best_results[t][1] < correlation):
-                    best_results[t][0] = error
-                    best_results[t][1] = correlation
+                    best_results[t][0] = conditions
+                    best_results[t][1] = str(error)
+                    best_results[t][2] = str(correlation)
                 if (max_correlation < correlation):
                     max_correlation = correlation
                     best_condition = conditions
@@ -55,5 +56,20 @@ for t in range(0, 4):
                     break;
     file.close()
 
+for t in range(0, 4):
+    function = ''
+    if t == 0:
+        function = 'LINEAR'
+    elif t == 1:
+       function = 'POLYNOMIAL'
+    elif t == 2:
+        function = 'GAUSSIAN'
+    elif t == 3:
+        function = 'SIGMOID'
+    print function + ' - best prediction'
+    print 'parameters: ', best_condition[t][0]
+    print 'error: ', best_condition[t][1]
+    print 'correlation: ', best_condition[t][2]
+    print '\n'
 print "best conditions: ", best_condition
 print "max correlation: ", max_correlation
