@@ -25,8 +25,13 @@ def getFunction(t):
 
 import numpy as np
 from svmutil import *
-# Read data in LIBSVM format
-y, x = svm_read_problem('input_data')
+import subprocess
+filename = 'temperature_data'
+filename_scale = filename + '.scale'
+subprocess.call('svm-scale -l -1 -u 1 ' + filename + ' > ' + filename_scale, shell=True) 
+print 'Creato il file ', filename_scale, 'con i dati normalizzati'
+
+y, x = svm_read_problem(filename_scale)
 prob  = svm_problem(y, x)
 
 max_correlation = 0
@@ -44,6 +49,10 @@ for t in range(0, 4):
         g_arr = [1]
         r_arr = [1]
         d_arr = [1]
+    elif t ==3:
+        g_arr = [1]
+        r_arr = np.arange(1, 10, 2)
+        d_arr = np.arange(1, 10, 2)
     else:
         g_arr = np.arange(1, 10, 2)
         r_arr = np.arange(1, 10, 2)
@@ -51,11 +60,13 @@ for t in range(0, 4):
     for c in range (1, 100, 10):
         for e in e_arr:
             for p in p_arr:
-                for g in g_arr:
-                    for r in r_arr:
-                        for d in d_arr:
-                            conditions = 't=' + str(t) + ' c=' + str(c) + ' e=' + str(e) + ' p=' + str(p) + ' g=' + str(g) + ' r=' + str(r)
-                            param = svm_parameter('-q -s 3 -t '+ str(t) +' -c '+ str(c) +' -e ' + str(e) + ' -p ' + str(p) + ' -g ' + str(g) + ' -r '+ str(r))
+                for r in r_arr:
+                    for d in d_arr:
+                        for g in g_arr:
+                            conditions = '-t ' + str(t) + ' -c ' + str(c) + ' -e ' + str(e) + ' -p ' + str(p) + ' -r ' + str(r)
+                            if t != 3:
+                                conditions += ' -g ' + str(g)
+                            param = svm_parameter('-q -s 3 ' + conditions)
                             m = svm_train(prob, param)
                             p_label, p_acc, p_val = svm_predict(y, x, m)
                             error, correlation = getResults(p_acc)
@@ -72,11 +83,6 @@ for t in range(0, 4):
                                 break;
     print 'Finiti training e previsione per ', name
     file.close()
-
-print "Standard Sigmoid:"
-param = svm_parameter('-s 3 -t 3')
-m = svm_train(prob, param)
-p_label, p_acc, p_val = svm_predict(y, x, m)
 
 for t in range(0, 4):
     print getFunction(t) + ' - best prediction'
