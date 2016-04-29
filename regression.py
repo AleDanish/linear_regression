@@ -37,6 +37,7 @@ prob  = svm_problem(y, x)
 max_correlation = 0
 best_conditions = ''
 best_results = [['0' for i in range(3)] for j in range(4)]
+prediction = [[] for i in range(4)]
 
 for t in range(0, 4):
     name = getFunction(t)
@@ -66,9 +67,10 @@ for t in range(0, 4):
                             conditions = '-t ' + str(t) + ' -c ' + str(c) + ' -e ' + str(e) + ' -p ' + str(p) + ' -r ' + str(r)
                             if t != 3:
                                 conditions += ' -g ' + str(g)
-                            param = svm_parameter('-q -s 3 ' + conditions)
-                            m = svm_train(prob, param)
-                            p_label, p_acc, p_val = svm_predict(y, x, m)
+                            #param = svm_parameter('-q -s 3 ' + conditions)
+                            param = '-q -s 3 ' + conditions
+                            m = svm_train(y[:500], x[:500], param)
+                            p_label, p_acc, p_val = svm_predict(y[500:], x[500:], m)
                             error, correlation = getResults(p_acc)
                             results = 'mean squared error:' + str(error) + ' - correlation:' + str(correlation) + '\n'
                             file.write(conditions + ": " + results)
@@ -76,6 +78,7 @@ for t in range(0, 4):
                                 best_results[t][0] = conditions
                                 best_results[t][1] = str(error)
                                 best_results[t][2] = str(correlation)
+                                prediction[t] = p_label
                             if (max_correlation < correlation):
                                 max_correlation = correlation
                                 best_condition = conditions
@@ -89,6 +92,7 @@ for t in range(0, 4):
     print 'parameters: ', best_results[t][0]
     print 'error: ', best_results[t][1]
     print 'correlation: ', best_results[t][2]
+    print 'prediction: ', prediction[t]
     print '\n'
 print "best conditions: ", best_condition
 print "max correlation: ", max_correlation
