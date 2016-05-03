@@ -109,8 +109,23 @@ for t in range(0, 4):
 rw = []
 for i in range(sample_num, len(y), 1):
     rw.append(y[sample_num])
-print 'Predict k-step with Random-Walk: '
-    
+print 'Predict k-step with Random-Walk: ', rw
+
+file = open('output/results', 'w')
+for num in range(sample_num, len(y), 1):
+    file.write('### RANDOM WALK ###\n')
+    file.write('next value: ' + p_label + '\n')
+    for t in range(0, 4):
+        param = '-q -s 3 ' + best_results_error[t][0]
+        m = svm_train(y[:num], x[:num], param)
+        p_label, p_acc, p_val = svm_predict(y[num], x[num], m)
+        error, correlation = getResults(p_acc)
+        print '### EPSILON-SRV ' + getFunction(t) + ' ###\n'
+        print 'error: ', error, ' - correlation: ', correlation, ' - next value: ', p_label
+        file.write('### EPSILON-SRV ' + getFunction(t) + ' ###\n')
+        file.write('error: ' + error + ' - correlation: ' + correlation + ' - next value: ' + p_label)
+
+file.close()
 
 for t in range(0, 4):
     print getFunction(t) + ' - best correlation prediction'
