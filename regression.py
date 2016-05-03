@@ -35,29 +35,36 @@ y, x = svm_read_problem(filename_scale)
 prob  = svm_problem(y, x)
 
 max_correlation = 0
-best_conditions = ''
-best_results = [['0' for i in range(3)] for j in range(4)]
-prediction = [[] for i in range(4)]
+max_correlation_error = 0
+best_conditions_corr = ''
+best_results_corr = [['0' for i in range(3)] for j in range(4)]
+prediction_corr = [[] for i in range(4)]
 
-for t in range(0, 4):
+min_error = 1000000
+min_error_corr = 0
+best_condition_error = ''
+best_results_error = [['1000000' for i in range(3)] for j in range(4)]
+prediction_error = [[] for i in range(4)]
+
+for t in range(0, 1):
     name = getFunction(t)
     print 'Inizio training e previsione per ', name
     file = open('output/' + name, 'w')
     file.write('### EPSILON-SRV ' + name + ' ###\n')
-    e_arr = np.arange(0.1, 1, 0.2)
-    p_arr = np.arange(0.1, 1, 0.2)
+    e_arr = np.arange(0.1, 1, 0.3)
+    p_arr = np.arange(0.1, 1, 0.3)
     if t == 0:
         g_arr = [1]
         r_arr = [1]
         d_arr = [1]
     elif t ==3:
         g_arr = [1]
-        r_arr = np.arange(1, 10, 2)
-        d_arr = np.arange(1, 10, 2)
+        r_arr = np.arange(1, 10, 3)
+        d_arr = np.arange(1, 10, 3)
     else:
-        g_arr = np.arange(1, 10, 2)
-        r_arr = np.arange(1, 10, 2)
-        d_arr = np.arange(1, 10, 2)
+        g_arr = np.arange(1, 10, 3)
+        r_arr = np.arange(1, 10, 3)
+        d_arr = np.arange(1, 10, 3)
     for c in range (1, 100, 10):
         for e in e_arr:
             for p in p_arr:
@@ -74,25 +81,42 @@ for t in range(0, 4):
                             error, correlation = getResults(p_acc)
                             results = 'mean squared error:' + str(error) + ' - correlation:' + str(correlation) + '\n'
                             file.write(conditions + ": " + results)
-                            if (float(best_results[t][2]) < correlation):
-                                best_results[t][0] = conditions
-                                best_results[t][1] = str(error)
-                                best_results[t][2] = str(correlation)
-                                prediction[t] = p_label
-                            if (max_correlation < correlation):
+                            if float(best_results_corr[t][2]) < correlation:
+                                best_results_corr[t][0] = conditions
+                                best_results_corr[t][1] = str(error)
+                                best_results_corr[t][2] = str(correlation)
+                                prediction_corr[t] = p_label
+                            if float(best_results_error[t][1]) > error:
+                                best_results_error[t][0] = conditions
+                                best_results_error[t][1] = str(error)
+                                best_results_error[t][2] = str(correlation)
+                                prediction_error[t] = p_label
+                            if max_correlation < correlation:
                                 max_correlation = correlation
-                                best_condition = conditions
+                                max_correlation_error = error
+                                best_condition_corr = conditions
+                            if min_error > error:
+                                min_error = error
+                                min_error_corr = correlation
+                                best_condition_error = conditions
                             if error >= 1:
                                 break;
     print 'Finiti training e previsione per ', name
     file.close()
 
-for t in range(0, 4):
-    print getFunction(t) + ' - best prediction'
-    print 'parameters: ', best_results[t][0]
-    print 'error: ', best_results[t][1]
-    print 'correlation: ', best_results[t][2]
-    print 'prediction: ', prediction[t]
+for t in range(0, 1):
+    print getFunction(t) + ' - best correlation prediction'
+    print 'parameters: ', best_results_corr[t][0]
+    print 'error: ', best_results_corr[t][1]
+    print 'correlation: ', best_results_corr[t][2]
+    print 'prediction: ', prediction_corr[t]
+    print getFunction(t) + ' - best error prediction'
+    print 'parameters: ', best_results_error[t][0]
+    print 'error: ', best_results_error[t][1]
+    print 'correlation: ', best_results_error[t][2]
+    print 'prediction: ', prediction_error[t]
     print '\n'
-print "best conditions: ", best_condition
+print "best correlation conditions: ", best_condition_corr
 print "max correlation: ", max_correlation
+print "best error conditions: ", best_condition_error
+print "min erorr: ", min_error
