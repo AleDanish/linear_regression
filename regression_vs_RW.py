@@ -23,9 +23,27 @@ def getFunction(t):
     elif t == 3:
         return 'SIGMOID'
 
+def plot(labels, *values_list):
+    values = list(values_list)
+    observations = []
+    for i in np.arange(1, len(values[0]) + 1):
+        observations.append(i)
+    print labels
+    print values
+    for lab, val in zip(labels, values):
+        plt.plot(observations, val, label=lab)
+    plt.legend()
+    plt.grid(True)
+    plt.xlabel('observations')
+    plt.ylabel('temperature (C)')
+    plt.title('Time-series data Prediction')
+    plt.ylim(0, 50)
+    plt.show()
+
 import numpy as np
 from svmutil import *
 import subprocess
+import matplotlib.pyplot as plt
 filename = 'temperature_data'
 filename_scale = filename + '.scale'
 subprocess.call('svm-scale -l -1 -u 1 ' + filename + ' > ' + filename_scale, shell=True) 
@@ -48,7 +66,7 @@ prediction_error = [[] for i in range(4)]
 
 sample_num = 500
 
-for t in range(0, 4):
+for t in range(0, 1):
     name = getFunction(t)
     print 'Started training and prevision for', name
     file = open('output/' + name, 'w')
@@ -144,16 +162,18 @@ print '-------------------------------------------------------------------------
 file = open('output/Prevision One-step ahaed', 'w')
 file.write('PREDICTION ONE-STEP AHEAD\n')
 print 'PREDICTION ONE-STEP AHEAD'
+regression_prediction = [[] for i in range(4)]
 for num in range(sample_num, len(y), 1):
     print '\nReal value:', y[num]
     file.write('\nReal value: ' + str(y[num]))
     num_rw = y[num - 1]
     print 'Random Walk: ', num_rw
     file.write('\nRandom Walk next value: ' + str(num_rw))
-    for t in range(0, 4):
+    for t in range(0, 1):
         param = '-q -s 3 ' + best_results_error[t][0]
         m = svm_train(y[:num], x[:num], param)
         p_label, p_acc, p_val = svm_predict([y[num]], [x[num]], m)
+        regression_prediction[t].extend(p_label)
         print 'EPSILON-SRV', getFunction(t), '- next predicted value:', p_label
         file.write('\nEPSILON-SRV: ' + str(p_label) + '\n')
 file.close()
@@ -162,3 +182,5 @@ print "Best correlation conditions: ", best_condition_corr
 print "Max correlation: ", max_correlation
 print "Best error conditions: ", best_condition_error
 print "Min erorr: ", min_error
+print regression_prediction
+plot(['real values', 'linear'], y[sample_num:], regression_prediction[0])
