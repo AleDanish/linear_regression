@@ -106,32 +106,37 @@ for t in range(0, 1):
     print 'Finished training and prevision for: ', name
     file.close()
 
-# K-step ahead prevision
-rw = []
-for i in range(sample_num, len(y), 1):
-    rw.append(y[sample_num])
-print 'Predict k-step with Random-Walk: ', rw
+print '\n'
+
+# K-steps ahead prevision
+file = open('output/Prevision K-steps ahead', 'w')
+real_values = y[sample_num:]
+file.write('REAL-VALUE:\n' + str(real_values) + '\n')
+print 'REAL VALUE:', real_values
+prediction_rw = []
+for i in range(sample_num, len(y)):
+    prediction_rw.append(y[sample_num-1])
+file.write('PREDICTION K-STEP AHEAD WITH RANDOM WALK\n' + str(prediction_rw)  + '\n')
+print 'PREDICTION K-STEP AHEAD WITH RANDOM WALK:', prediction_rw
 
 for t in range(0, 1):
-    print getFunction(t) + ' - best correlation prediction'
-    print 'parameters: ', best_results_corr[t][0]
-    print 'error: ', best_results_corr[t][1]
-    print 'correlation: ', best_results_corr[t][2]
-    print 'prediction: ', prediction_corr[t]
-    print getFunction(t) + ' - best error prediction'
-    print 'parameters: ', best_results_error[t][0]
-    print 'error: ', best_results_error[t][1]
-    print 'correlation: ', best_results_error[t][2]
-    print 'prediction: ', prediction_error[t]
-    print '\n'
+    print getFunction(t), '- best correlation prediction', prediction_corr[t]
+    print 'parameters:', best_results_corr[t][0] , '- error:', best_results_corr[t][1], '- correlation:', best_results_corr[t][2]
+    print getFunction(t), '- best error prediction', prediction_error[t]
+    print 'parameters: ', best_results_error[t][0], '- error: ', best_results_error[t][1], '- correlation: ', best_results_error[t][2], '\n'
+    file.write(getFunction(t) + ' - best correlation prediction' + str(prediction_corr[t]))
+    file.write('parameters:' + best_results_corr[t][0] + 'error:' + best_results_corr[t][1] + 'correlation:' + best_results_corr[t][2])
+    file.write(getFunction(t) + '- best error prediction' + str(prediction_error[t]))
+    file.write('parameters: ' + best_results_error[t][0] + 'error: ' + best_results_error[t][1] + 'correlation: ' + best_results_error[t][2] + '\n')
+file.close()
 
 # One-step ahead prevision
-file = open('output/results', 'w')
+file = open('output/Prevision One-step ahaed', 'w')
 for num in range(sample_num, len(y), 1):
-    num_rw = y[sample_num]
-    print '### Random Walk ###'
+    num_rw = y[num - 1]
+    print '\n### Random Walk ###'
     print 'next value: ', num_rw
-    file.write('### RANDOM WALK ###\n')
+    file.write('### RANDOM WALK ###')
     file.write('next value: ' + str(num_rw) + '\n')
     for t in range(0, 1):
         param = '-q -s 3 ' + best_results_error[t][0]
@@ -140,13 +145,13 @@ for num in range(sample_num, len(y), 1):
         Y=[y[num]]
         p_label, p_acc, p_val = svm_predict(Y, X, m)
         error, correlation = getResults(p_acc)
-        print '### EPSILON-SRV ' + getFunction(t) + ' ###\n'
-        print 'error: ', error, ' - correlation: ', correlation, ' - next value: ', p_label
-        file.write('### EPSILON-SRV ' + getFunction(t) + ' ###\n')
+        print '### EPSILON-SRV', getFunction(t) + '###'
+        print 'error:', error, '- correlation:', correlation, '- next value:', p_label
+        file.write('### EPSILON-SRV ' + getFunction(t) + ' ###')
         file.write('error: ' + str(error) + ' - correlation: ' + str(correlation) + ' - next value: ' + str(p_label))
 file.close()
 
-print "best correlation conditions: ", best_condition_corr
+print "\nbest correlation conditions: ", best_condition_corr
 print "max correlation: ", max_correlation
 print "best error conditions: ", best_condition_error
 print "min erorr: ", min_error
