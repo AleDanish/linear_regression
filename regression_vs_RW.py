@@ -29,7 +29,7 @@ import subprocess
 filename = 'temperature_data'
 filename_scale = filename + '.scale'
 subprocess.call('svm-scale -l -1 -u 1 ' + filename + ' > ' + filename_scale, shell=True) 
-print 'Creato il file ', filename_scale, 'con i dati normalizzati'
+print 'Created file', filename_scale, 'with normalized data'
 
 y, x = svm_read_problem(filename_scale)
 prob  = svm_problem(y, x)
@@ -48,9 +48,9 @@ prediction_error = [[] for i in range(4)]
 
 sample_num = 500
 
-for t in range(0, 4):
+for t in range(0, 1):
     name = getFunction(t)
-    print 'Inizio training e previsione per ', name
+    print 'Started training and prevision for', name
     file = open('output/' + name, 'w')
     file.write('### EPSILON-SRV ' + name + ' ###\n')
     e_arr = np.arange(0.1, 1, 0.3)
@@ -103,31 +103,16 @@ for t in range(0, 4):
                                 best_condition_error = conditions
                             if error >= 1:
                                 break;
-    print 'Finiti training e previsione per ', name
+    print 'Finished training and prevision for: ', name
     file.close()
 
+# K-step ahead prevision
 rw = []
 for i in range(sample_num, len(y), 1):
     rw.append(y[sample_num])
 print 'Predict k-step with Random-Walk: ', rw
 
-file = open('output/results', 'w')
-for num in range(sample_num, len(y), 1):
-    file.write('### RANDOM WALK ###\n')
-    file.write('next value: ' + p_label + '\n')
-    for t in range(0, 4):
-        param = '-q -s 3 ' + best_results_error[t][0]
-        m = svm_train(y[:num], x[:num], param)
-        p_label, p_acc, p_val = svm_predict(y[num], x[num], m)
-        error, correlation = getResults(p_acc)
-        print '### EPSILON-SRV ' + getFunction(t) + ' ###\n'
-        print 'error: ', error, ' - correlation: ', correlation, ' - next value: ', p_label
-        file.write('### EPSILON-SRV ' + getFunction(t) + ' ###\n')
-        file.write('error: ' + error + ' - correlation: ' + correlation + ' - next value: ' + p_label)
-
-file.close()
-
-for t in range(0, 4):
+for t in range(0, 1):
     print getFunction(t) + ' - best correlation prediction'
     print 'parameters: ', best_results_corr[t][0]
     print 'error: ', best_results_corr[t][1]
@@ -139,6 +124,28 @@ for t in range(0, 4):
     print 'correlation: ', best_results_error[t][2]
     print 'prediction: ', prediction_error[t]
     print '\n'
+
+# One-step ahead prevision
+file = open('output/results', 'w')
+for num in range(sample_num, len(y), 1):
+    num_rw = y[sample_num]
+    print '### Random Walk ###'
+    print 'next value: ', num_rw
+    file.write('### RANDOM WALK ###\n')
+    file.write('next value: ' + str(num_rw) + '\n')
+    for t in range(0, 1):
+        param = '-q -s 3 ' + best_results_error[t][0]
+        m = svm_train(y[:num], x[:num], param)
+        X=[x[num]]
+        Y=[y[num]]
+        p_label, p_acc, p_val = svm_predict(Y, X, m)
+        error, correlation = getResults(p_acc)
+        print '### EPSILON-SRV ' + getFunction(t) + ' ###\n'
+        print 'error: ', error, ' - correlation: ', correlation, ' - next value: ', p_label
+        file.write('### EPSILON-SRV ' + getFunction(t) + ' ###\n')
+        file.write('error: ' + str(error) + ' - correlation: ' + str(correlation) + ' - next value: ' + str(p_label))
+file.close()
+
 print "best correlation conditions: ", best_condition_corr
 print "max correlation: ", max_correlation
 print "best error conditions: ", best_condition_error
