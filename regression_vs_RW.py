@@ -137,7 +137,7 @@ for num in range(sample_num, len(y), 1):
     file.write('\nReal value: ' + str(y[num]))
     num_rw = y[num - 1]
     regression_randomwalk.append(num_rw)
-    print 'Random Walk: ', num_rw
+    print 'Random Walk - next predicted value:', num_rw
     file.write('\nRandom Walk next value: ' + str(num_rw))
     for t in range(0, 4):
         param = '-q -s 3 ' + best_results_error[t][0]
@@ -150,11 +150,14 @@ file.close()
 print '----------------------------------------------------------------------------------------------------------------------------'
 
 # Regression Evaluation
-for t in range(0, 4):
+print 'EVALUATION'
+mae = ev.calculateMAE(y[sample_num:], regression_randomwalk)
+rmse = ev.calculateRMSE(y[sample_num:], regression_randomwalk)
+print 'RANDOM WALK - MAE:', mae, '- RMSE:', rmse
+for t in (0, 4):
     mae = ev.calculateMAE(y[sample_num:], regression_prediction[t])
     rmse = ev.calculateRMSE(y[sample_num:], regression_prediction[t])
-    print ut.getFunctions(t), '- MAE: ', mae
-    print ut.getFunctions(t), '- RMSE: ', rmse
+    print ut.getFunction(t), '- MAE:', mae, '- RMSE:', rmse
 
 labels = ['real values', 'random walk', 'linear', 'polynomial', 'gaussian', 'sigmoid']
 ut.plot(labels, y[sample_num:], regression_randomwalk, regression_prediction[0], regression_prediction[1], regression_prediction[2], regression_prediction[3])
