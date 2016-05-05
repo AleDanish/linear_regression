@@ -152,7 +152,9 @@ print '-------------------------------------------------------------------------
 # Regression Evaluation
 for t in range(0, 4):
     mae = ev.calculateMAE(y[sample_num:], regression_prediction[t])
-    print mae
+    rmse = ev.calculateRMSE(y[sample_num:], regression_prediction[t])
+    print ut.getFunctions(t), '- MAE: ', mae
+    print ut.getFunctions(t), '- RMSE: ', rmse
 
 labels = ['real values', 'random walk', 'linear', 'polynomial', 'gaussian', 'sigmoid']
 ut.plot(labels, y[sample_num:], regression_randomwalk, regression_prediction[0], regression_prediction[1], regression_prediction[2], regression_prediction[3])
