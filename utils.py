@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+import matplotlib.pyplot as plt
+import numpy as np
+
 def getResults(p_acc):
     error = ''
     correlation = ''
@@ -27,6 +30,7 @@ def plot(labels, *values_list):
     print labels
     print values
     for lab, val in zip(labels, values):
+        print val
         plt.plot(observations, val, label=lab)
     plt.legend()
     plt.grid(True)
