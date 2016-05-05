@@ -27,15 +27,12 @@ def plot(labels, *values_list):
     observations = []
     for i in np.arange(1, len(values[0]) + 1):
         observations.append(i)
-    print labels
-    print values
     for lab, val in zip(labels, values):
-        print val
         plt.plot(observations, val, label=lab)
     plt.legend()
     plt.grid(True)
     plt.xlabel('observations')
     plt.ylabel('temperature (C)')
     plt.title('Time-series data Prediction')
-    plt.ylim(0, 50)
+    plt.ylim(10, 40)
     plt.show()

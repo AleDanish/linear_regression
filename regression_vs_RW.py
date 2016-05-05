@@ -7,6 +7,7 @@ import numpy as np
 from svmutil import *
 import subprocess
 import utils as ut
+import regression_evaluation as ev
 filename = 'temperature_data'
 filename_scale = filename + '.scale'
 subprocess.call('svm-scale -l -1 -u 1 ' + filename + ' > ' + filename_scale, shell=True) 
@@ -92,6 +93,10 @@ for t in range(0, 4):
     print 'EPSILON-SRV', ut.getFunction(t)
     print 'BEST CORRELATION - parameters:', best_results_corr[t][0] , '- error:', best_results_corr[t][1], '- correlation:', best_results_corr[t][2]
     print 'BEST ERROR - parameters: ', best_results_error[t][0], '- error: ', best_results_error[t][1], '- correlation: ', best_results_error[t][2], '\n'
+print 'Best correlation conditions:', best_condition_corr
+print 'Max correlation:', max_correlation
+print 'Best error conditions:', best_condition_error
+print 'Min erorr:', min_error
 print '----------------------------------------------------------------------------------------------------------------------------'
 
 # K-steps ahead prevision
@@ -125,11 +130,13 @@ print '-------------------------------------------------------------------------
 file = open('output/Prevision One-step ahaed', 'w')
 file.write('PREDICTION ONE-STEP AHEAD\n')
 print 'PREDICTION ONE-STEP AHEAD'
+regression_randomwalk = []
 regression_prediction = [[] for i in range(4)]
 for num in range(sample_num, len(y), 1):
     print '\nReal value:', y[num]
     file.write('\nReal value: ' + str(y[num]))
     num_rw = y[num - 1]
+    regression_randomwalk.append(num_rw)
     print 'Random Walk: ', num_rw
     file.write('\nRandom Walk next value: ' + str(num_rw))
     for t in range(0, 4):
@@ -141,10 +148,11 @@ for num in range(sample_num, len(y), 1):
         file.write('\nEPSILON-SRV: ' + str(p_label) + '\n')
 file.close()
 print '----------------------------------------------------------------------------------------------------------------------------'
-print "Best correlation conditions: ", best_condition_corr
-print "Max correlation: ", max_correlation
-print "Best error conditions: ", best_condition_error
-print "Min erorr: ", min_error
-print regression_prediction
-labels = ['real values', 'linear', 'polynomial', 'gaussian', 'sigmoid']
-ut.plot(labels, y[sample_num:], regression_prediction[0], regression_prediction[1], regression_prediction[2], regression_prediction[3])
+
+# Regression Evaluation
+for t in range(0, 4):
+    mae = ev.calculateMAE(y[sample_num:], regression_prediction[t])
+    print mae
+
+labels = ['real values', 'random walk', 'linear', 'polynomial', 'gaussian', 'sigmoid']
+ut.plot(labels, y[sample_num:], regression_randomwalk, regression_prediction[0], regression_prediction[1], regression_prediction[2], regression_prediction[3])
