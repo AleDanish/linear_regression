@@ -43,13 +43,13 @@ for t in range(0, 4):
         d_arr = [1]
     elif t ==3:
         g_arr = [1]
-        r_arr = np.arange(1, 10, 6)
-        d_arr = np.arange(1, 10, 6)
+        r_arr = np.arange(1, 10, 3)
+        d_arr = np.arange(1, 10, 3)
     else:
-        g_arr = np.arange(1, 10, 6)
-        r_arr = np.arange(1, 10, 6)
-        d_arr = np.arange(1, 10, 63)
-    for c in range (1, 100, 100):
+        g_arr = np.arange(1, 10, 3)
+        r_arr = np.arange(1, 10, 3)
+        d_arr = np.arange(1, 10, 3)
+    for c in range (1, 100, 10):
         for e in e_arr:
             for p in p_arr:
                 for r in r_arr:

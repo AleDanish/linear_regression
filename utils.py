@@ -51,5 +51,5 @@ def plot(labels, real_values, *values_list):
     plt.ylim(0, 31)
     for lab, val in zip(labels, k_step_ahead):
         plt.plot(observations, val, label=lab)
-    plt.figlegend(lines, labels, loc = 'lower center', ncol=6, labelspacing=0.)
+    plt.figlegend(lines, labels, loc = 'lower center', ncol=len(labels), labelspacing=0.)
     plt.show()
