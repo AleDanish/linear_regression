@@ -34,5 +34,5 @@ def plot(labels, *values_list):
     plt.xlabel('observations')
     plt.ylabel('temperature (C)')
     plt.title('Time-series data Prediction')
-    plt.ylim(10, 40)
+    plt.ylim(0, 40)
     plt.show()

@@ -28,7 +28,7 @@ best_condition_error = ''
 best_results_error = [['1000000' for i in range(3)] for j in range(4)]
 prediction_error = [[] for i in range(4)]
 
-sample_num = 500
+sample_num = 450
 
 for t in range(0, 4):
     name = ut.getFunction(t)
@@ -85,7 +85,7 @@ for t in range(0, 4):
                                 best_condition_error = conditions
                             if error >= 1:
                                 break;
-    print 'Finished training and prevision for ', name
+    print 'Finished training and prevision for', name
     file.close()
 
 print '----------------------------------------------------------------------------------------------------------------------------'
@@ -154,7 +154,7 @@ print 'EVALUATION'
 mae = ev.calculateMAE(y[sample_num:], regression_randomwalk)
 rmse = ev.calculateRMSE(y[sample_num:], regression_randomwalk)
 print 'RANDOM WALK - MAE:', mae, '- RMSE:', rmse
-for t in (0, 4):
+for t in range (0, 4):
     mae = ev.calculateMAE(y[sample_num:], regression_prediction[t])
     rmse = ev.calculateRMSE(y[sample_num:], regression_prediction[t])
     print ut.getFunction(t), '- MAE:', mae, '- RMSE:', rmse
