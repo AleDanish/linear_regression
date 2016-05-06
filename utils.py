@@ -22,17 +22,34 @@ def getFunction(t):
     elif t == 3:
         return 'SIGMOID'
 
-def plot(labels, *values_list):
+def plot(labels, real_values, *values_list):
     values = list(values_list)
+    one_step_ahead = []
+    one_step_ahead.append(real_values)
+    k_step_ahead = []
+    k_step_ahead.append(real_values)
+    for i in range(0, len(values)/2):
+        one_step_ahead.append(values[i])
+        k_step_ahead.append(values[len(values)/2 + i])
     observations = []
-    for i in np.arange(1, len(values[0]) + 1):
+    for i in np.arange(1, len(real_values) + 1):
         observations.append(i)
-    for lab, val in zip(labels, values):
-        plt.plot(observations, val, label=lab)
-    plt.legend()
+    plt.subplot(211)
     plt.grid(True)
     plt.xlabel('observations')
     plt.ylabel('temperature (C)')
-    plt.title('Time-series data Prediction')
-    plt.ylim(0, 40)
+    plt.title('One-step-ahead Data Prediction')
+    plt.ylim(0, 31)
+    lines = []
+    for lab, val in zip(labels, one_step_ahead):
+        lines.extend(plt.plot(observations, val, label=lab))
+    plt.subplot(212)
+    plt.grid(True)
+    plt.xlabel('observations')
+    plt.ylabel('temperature (C)')
+    plt.title('K-step-ahead Data Prediction')
+    plt.ylim(0, 31)
+    for lab, val in zip(labels, k_step_ahead):
+        plt.plot(observations, val, label=lab)
+    plt.figlegend(lines, labels, loc = 'lower center', ncol=6, labelspacing=0.)
     plt.show()
